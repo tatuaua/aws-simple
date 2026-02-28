@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigatewayv2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigatewayv2integrations"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
@@ -22,6 +23,14 @@ func NewAwsSimpleStack(scope constructs.Construct, id string, props *AwsSimpleSt
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
+	counterTable := awsdynamodb.NewTable(stack, jsii.String("CounterTable"), &awsdynamodb.TableProps{
+		PartitionKey: &awsdynamodb.Attribute{
+			Name: jsii.String("id"),
+			Type: awsdynamodb.AttributeType_STRING,
+		},
+		BillingMode: awsdynamodb.BillingMode_PAY_PER_REQUEST,
+	})
+
 	// Create Lambda function from the site directory
 	lambdaFn := awslambda.NewFunction(stack, jsii.String("SiteHandler"), &awslambda.FunctionProps{
 		Runtime:      awslambda.Runtime_PROVIDED_AL2023(),
@@ -31,7 +40,12 @@ func NewAwsSimpleStack(scope constructs.Construct, id string, props *AwsSimpleSt
 		MemorySize:   jsii.Number(128),
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(30)),
 		Description:  jsii.String("Simple Go Lambda handler"),
+		Environment: &map[string]*string{
+			"TABLE_NAME": counterTable.TableName(),
+		},
 	})
+
+	counterTable.GrantReadWriteData(lambdaFn)
 
 	// Create HTTP API (API Gateway v2)
 	httpAPI := awsapigatewayv2.NewHttpApi(stack, jsii.String("HttpApi"), &awsapigatewayv2.HttpApiProps{

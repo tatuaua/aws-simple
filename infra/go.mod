@@ -1,6 +1,6 @@
 module aws-simple/infra
 
-go 1.21
+go 1.23
 
 require (
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.127.0
