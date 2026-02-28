@@ -1,0 +1,35 @@
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bootstrap
+
+# Go test files
+*.test
+
+# Go coverage
+*.out
+coverage.html
+
+# Go vendor (if used)
+vendor/
+
+# CDK
+cdk.out/
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
