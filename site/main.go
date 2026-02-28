@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -132,6 +133,7 @@ func jsonResponse(statusCode int, payload counterPayload) (events.APIGatewayV2HT
 }
 
 func htmlResponse(statusCode int, payload counterPayload) (events.APIGatewayV2HTTPResponse, error) {
+	valueText := strconv.FormatInt(payload.Value, 10)
 	body := `
 		<!DOCTYPE html>
 		<html>
@@ -139,7 +141,7 @@ func htmlResponse(statusCode int, payload counterPayload) (events.APIGatewayV2HT
 			<title>Counter</title>
 		</head>
 		<body>
-			<h1>Counter Value: ` + string(rune(payload.Value)) + `</h1>
+			<h1>Counter Value: ` + valueText + `</h1>
 			<form method="post">
 				<button type="submit">Increment</button>
 			</form>
