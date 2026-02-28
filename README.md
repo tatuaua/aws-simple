@@ -1,0 +1,1 @@
+Full stack website in < 400 lines of code with minimal dependencies, deployment, routing and persistence using CDK and Go.
